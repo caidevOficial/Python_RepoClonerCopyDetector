@@ -45,6 +45,7 @@ class Formatter:
         Returns:
             str: [The formatted time string.]\n
         """
+        self.__format_datetime_as_string()
         return self.__formattedTimeStr
 
     @crude_time.setter
@@ -56,7 +57,6 @@ class Formatter:
             value (datetime): [Time to be formatted and saved into the class.]\n
         """
         self.__crudeTime = value
-        self.__format_datetime_as_string()
 
     @formatted_time_str.setter
     def formatted_time_str(self, formatTime: str) -> None:

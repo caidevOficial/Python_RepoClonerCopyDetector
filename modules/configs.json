@@ -1,10 +1,16 @@
 {
+    "app_info": {
+        "app_name": "Github Repository Cloner",
+        "main_filename": "Github_Repositories.csv",
+        "version": "[V2.2.1.11]",
+        "author": "[FacuFalcone - CaidevOficial]"
+    },
     "repo_cloner": {
         "Github": {
             "URL": "https://api.github.com/repos",
             "USER": "CaidevOficial",
-            "REPO": "SPD2022_TPS",
-            "BRANCH": "main"
+            "REPO": "Python_copydetector",
+            "BRANCH": "master"
         },
         "DataFrame": {
             "Fields": {
@@ -41,10 +47,10 @@
                         "drop": "./modules/database/queries/DDL/drop.sql"
                     },
                     "DML":{
-                        "insert": "./modules/database/queries/DML/insert.sql",
                         "delete": "./modules/database/queries/DML/delete.sql",
-                        "update": "./modules/database/queries/DML/update.sql",
-                        "select": "./modules/database/queries/DDL/select.sql"
+                        "insert": "./modules/database/queries/DML/insert.sql",
+                        "select": "./modules/database/queries/DDL/select.sql",
+                        "update": "./modules/database/queries/DML/update.sql"
                     }
                 }
             }

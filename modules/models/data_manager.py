@@ -21,6 +21,7 @@ import requests
 from modules.models.df_handler import DataFrameHandler as DFH
 from modules.models.clone_messenger import CloneMessenger as CM
 from modules.models.command_manager import Command as CMD
+from modules.models.config_manager import ConfigManager as CoMa
 from pandas import DataFrame
 
 
@@ -253,24 +254,21 @@ class DataManager:
 
     # ?########? METHODS #########
 
-    def initial_config(self, name: str, version: str, author: str, APIURL: dict, mainDir: str):
-        """[summary] \n
-        Initialize the config of the class, Also sets the API response \n
-        and the date of the API. \n
-        Args:
-            name (str): [The name of the program]. \n
-            version (str): [The version of the program]. \n
-            author (str): [The author of the program]. \n
-            APIURL (dict): [The API URL of the program]. \n
-            mainDir (str): [The main directory to clone repositories]. \n
+    def initial_config(self, config_manager: CoMa):
         """
-        self.app_name = name
-        self.app_version = version
-        self.app_author = author
-        self.API_url = APIURL
+        The function takes a config_manager object as an argument and sets the values of the class
+        attributes to the values of the config_manager object's attributes
+        
+        :param config_manager: CoMa
+        :type config_manager: CoMa
+        """
+        self.app_name = config_manager.app_name
+        self.app_version = config_manager.version
+        self.app_author = config_manager.author
+        self.API_url = config_manager.rc_API_config
         self.API_response = self.API_url
         self.API_date = self.API_response
-        self.main_dir = mainDir
+        self.main_dir = config_manager.rc_files_config['Dir_Cloned_Repos']
 
     def __add_comand(self, command: CMD) -> None:
         """[summary] \n

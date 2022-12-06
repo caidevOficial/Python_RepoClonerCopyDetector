@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import datetime
 import pandas as pd
 
 from modules.models.df_handler import DataFrameHandler as DfH
@@ -24,81 +23,87 @@ from modules.models.dir_manager import DirectoryManager as DirM
 from modules.models.formatter import Formatter as FMT
 from modules.models.plot_manager import PlotManager as Plot
 from modules.models.clone_messenger import CloneMessenger as CM
+from modules.models.config_manager import ConfigManager as CoMa
 
-# ?######### Start Basic Configuration ##########
-FILENAME: str = 'Github_Repositories.csv'
-NAME: str = 'Github Repository Cloner'
-VERSION: str = '[V2.2.1.11]'
-AUTHOR: str = '[FacuFalcone - CaidevOficial]'
-FILE_CONFIG_NAME: str = './modules/configs.json'
-# ?######### End Basic Configuration ##########
-
-def __directories_creation(dir_manager: DirM, json_dir_config: dict):
-    dirs = [
-        json_dir_config['Dir_Plots_img'], 
-        json_dir_config['Dir_Cloned_Repos'], 
-        json_dir_config['Dir_Statistics']
-    ]
-    for actual_dir in dirs:
-        dir_manager.path_to_create = actual_dir
+def __directories_creation(dir_manager: DirM, config_manager: CoMa):
+    """
+    It creates directories if they don't exist
+    
+    :param dir_manager: DirM = DirManager()
+    :type dir_manager: DirM
+    :param config_manager: CoMa = CoMa()
+    :type config_manager: CoMa
+    """
+    for _, path in config_manager.rc_files_config.items():
+        dir_manager.path_to_create = path
         dir_manager.create_dir_if_no_exist()
 
-def __config_df(handler: DfH, json_configs: dict, json_dir_config: dict):
+def __config_df(handler: DfH, config_manager: CoMa):
+    """
+    It reads the csv file and sets the main dataframe to the class to handle it
+    
+    :param handler: DfH = DfH()
+    :type handler: DfH
+    :param config_manager: CoMa = CoMa()
+    :type config_manager: CoMa
+    """
     # *# Reads the 'csv' File to get the dataframe
-    df = pd.read_csv(FILENAME)
+    df = pd.read_csv(config_manager.main_csv_file)
     
     # *# Sets the Main DF to the class to handle it
-    handler.configs_json_values = json_configs
-    handler.main_dataframe = handler.format_DF(df, json_configs)
-    handler.configurate_DF(
-        handler.configs_json_values['Course'], 
-        json_dir_config['Dir_Statistics']
-    )
+    handler.main_dataframe = handler.format_DF(df)
+    handler.configurate_DF()
 
-def __print_messages(message_manager: CM, time_manager: FMT, plotter_manager: Plot):
+def __print_messages(message_manager: CM, plotter_manager: Plot, config_manager: CoMa):
+    """
+    It prints a message, then creates a pie chart
+    
+    :param message_manager: CM
+    :type message_manager: CM
+    :param plotter_manager: Plot
+    :type plotter_manager: Plot
+    :param config_manager: CoMa = CoMa()
+    :type config_manager: CoMa
+    """
     messages = [
-        f"Elapsed Time: {time_manager.formatted_time_str}",
-        f"Thanks for using {NAME} {VERSION} by {AUTHOR}! ♥",
-        "Creating Pie Chart...",
-        "Success! All task done. Press a key to close the app"
-    ]
+        f"Thanks for using {config_manager.app_name} {config_manager.version} by {config_manager.author}! ♥",
+        "Creating Pie Chart..."]
     
     for i_msg in range(len(messages)):
         message_manager.message = messages[i_msg]
         message_manager.print_success_message()
-        if i_msg == 2:
+        if i_msg == 1:
             plotter_manager.create_pie_chart()
 
-def repo_cloner():
-    try:
-        start_time = datetime.datetime.now()
-    # ?#########? Start Initialization ##########
-        JsonFile = pd.read_json(f"./{FILE_CONFIG_NAME}", orient='records')["repo_cloner"]
-        JsonAPI = JsonFile['Github']
-        JsonDFConfigs: dict = JsonFile['DataFrame']['Fields']
-        JsonDirConfigs: dict = JsonFile['Files']
-    # ?#########? End Initialization ############
-
+def repo_cloner_manager(configs_manager: CoMa):
+    """
+    It clones the repositories from the dataframe in different directories
+    
+    :param configs_manager: CoMa
+    :type configs_manager: CoMa
+    """
     # ?#########? Start Objects Instances ##########
-        df_handler = DfH()
-        data_manager = DM()
-        message_manager = CM()
-        time_manager = FMT()
-        plotter_manager = Plot()
-        dir_manager = DirM()
+    data_manager = DM()
+    message_manager = CM()
+    plotter_manager = Plot()
+    dir_manager = DirM()
+    # ?#########? End Objects Instances ##########
+    try:
+    # ?#########? Start Objects Instances ##########
+        df_handler = DfH(configs_manager)
     # ?#########? End Objects Instances ##########
 
     # ?#########? Start Directory Creation ##########
-        __directories_creation(dir_manager, JsonDirConfigs)
+        __directories_creation(dir_manager, configs_manager)
     # ?#########? End Directory Creation ##########
 
     # ?#########? Start DataManager Configuration ##########
-        data_manager.initial_config(NAME, VERSION, AUTHOR, JsonAPI, JsonDirConfigs['Dir_Cloned_Repos'])
+        data_manager.initial_config(configs_manager)
     # ?#########? End DataManager Configuration ##########
 
     # ?#########? Start DataFrame Configuration ##########
         # *# Reads the 'csv' File to get the dataframe
-        __config_df(df_handler, JsonDFConfigs, JsonDirConfigs)
+        __config_df(df_handler, configs_manager)
     # ?#########? End DataFrame Configuration ##########
 
     # ?#########? Start Initialize DataManager ##########
@@ -106,20 +111,11 @@ def repo_cloner():
     # ?##########? End Initialize DataManager ###########
 
     # ?#########? Start PlotManager Configuration ##########
-        plotter_manager.initialize(df_handler, 'Cloned Repositories', JsonDirConfigs['Dir_Plots_img'])
-
-    # ?#########? Start Timer Config ##########
-        time_manager.crude_time = start_time
-    # ?#########? End Timer Config ##########
+        plotter_manager.initialize(df_handler, 'Cloned Repositories', configs_manager.rc_files_config['Dir_Plots_img'])
 
     # ?#########? Start Print Message ##########
-        __print_messages(message_manager, time_manager, plotter_manager)
+        __print_messages(message_manager, plotter_manager, configs_manager)
     # ?#########? End Print Message ##########
     except Exception as e:
         message_manager.message = f'Exception: {e.args}'
         message_manager.print_warning_message()
-    # finally:
-    #     _ = input()
-
-# if __name__ == '__main__':
-#     repo_cloner()

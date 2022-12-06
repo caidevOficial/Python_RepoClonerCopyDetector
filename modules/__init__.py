@@ -1,0 +1,2 @@
+from modules.copy_detector import copy_detector_manager as c_manager
+from modules.repo_cloner import repo_cloner_manager as r_manager

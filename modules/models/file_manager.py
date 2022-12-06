@@ -22,15 +22,14 @@ import json
 class FileManager:
     """Represents the file manager class that is in charge of handle the config json file."""
 
-    def __init__(self, file_path: str) -> None:
+    def __init__(self, config_dict: dict) -> None:
         """
         This function takes a file path as a string and returns None
         
         :param file_path: The path to the file you want to open
         :type file_path: str
         """
-        self.__path = file_path
-        self.__configs = self.open_file()
+        self.__configs = config_dict["configs"]['script']
 
     @property
     def percentage(self) -> float:
@@ -57,10 +56,3 @@ class FileManager:
         """
         return bool(self.__configs["sort_by_percent_desc"])
 
-    def open_file(self) -> dict:
-        """
-        It opens a file, reads it, and returns the contents of the file
-        :return: A dictionary of the configs.
-        """
-        with open(self.__path, 'r') as json_file:
-            return json.load(json_file)["copy_detector"]["configs"]['script']

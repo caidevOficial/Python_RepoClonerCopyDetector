@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import json
 import re
 import sqlite3 as db
 from pandas import DataFrame
@@ -24,9 +23,9 @@ from modules.common.color import Color as c
 
 class DAOManager:
     "Represents the DAO Manager, using SQLite"
-    def __init__(self, file_path: str) -> None:
-        self.__file_path = file_path
-        self.__db_configs = self.__open_config_file()
+    
+    def __init__(self, config_dict: dict) -> None:
+        self.__db_configs = config_dict["configs"]['database']
         self.__db_name: str = self.__db_configs['name']
         self.__insert_deleting_before = self.__db_configs['delete_before_insert']
         self.__table: str = self.__db_configs['table_name']
@@ -35,14 +34,6 @@ class DAOManager:
         self.__dml_paths: dict = self.__db_configs['paths']['DML']
 
 
-    def __open_config_file(self) -> dict:
-        """
-        It opens a json file, reads it, and returns a dictionary
-        :return: A dictionary
-        """
-        with open(self.__file_path, 'r') as db_config:
-            return json.load(db_config)["copy_detector"]["configs"]['database']
-    
     def __open_query_file(self, query_path: str) -> str:
         """
         It opens a file, reads it, and returns the contents of the file
@@ -163,4 +154,3 @@ class DAOManager:
         """
         query = self.__replace_table_name(self.__open_query_file(self.__ddl_paths['drop']))
         self.__execute_queries([query], 'Error dropping the table', f'Table {self.__table} dropped successfully', type='drop')
-        

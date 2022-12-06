@@ -19,6 +19,7 @@ from numpy import ndarray
 from pandas import DataFrame
 
 from modules.models.formatter import Formatter as FMT
+from modules.models.config_manager import ConfigManager as CoMa
 
 
 class DataFrameHandler:
@@ -28,14 +29,15 @@ class DataFrameHandler:
         class: [DataFrameHandler]. \n
     """
 
-    def __init__(self) -> None:
+    def __init__(self, config_manager: CoMa) -> None:
         # ?####? Attributes #####
-        self.__configs_json_values: dict = dict()
         self.__commands = list()
         self.__unique_columns: ndarray = list()
         self.__main_df: DataFrame = DataFrame()
         self.__students_df = list()
         self.__ordered_list_of_df_students: list[DataFrame] = list[DataFrame]()
+        self.__configs = config_manager
+        self.__configs_json_values: dict = self.__configs.rc_df_config
         # ?####? End Attributes #####
 
     # ?####? PROPERTIES - Getters #####
@@ -107,14 +109,14 @@ class DataFrameHandler:
         """
         self.__ordered_list_of_df_students.append(frame.reset_index(drop=True))
 
-    @configs_json_values.setter
-    def configs_json_values(self, value: dict) -> None:
-        """[summary] \n
-        Set the configs of the json. \n
-        Args:
-            value (dict): [The configs of the json]. \n
-        """
-        self.__configs_json_values = value
+    # @configs_json_values.setter
+    # def configs_json_values(self, value: dict) -> None:
+    #     """[summary] \n
+    #     Set the configs of the json. \n
+    #     Args:
+    #         value (dict): [The configs of the json]. \n
+    #     """
+    #     self.__configs_json_values = value
 
     @main_dataframe.setter
     def main_dataframe(self, frame: DataFrame):
@@ -156,7 +158,7 @@ class DataFrameHandler:
 
     # ?####? METHODS #####
 
-    def format_DF(self, df: DataFrame, JsonDFConfigs: dict) -> DataFrame:
+    def format_DF(self, df: DataFrame) -> DataFrame:
         """[summary] \n
         Format the dataframe by:\n
             - Removing the extra spaces.\n
@@ -171,10 +173,10 @@ class DataFrameHandler:
         formatter = FMT()
         df = df.applymap(lambda x: str(x).strip())
         # ?# Apply a Capitalise in every word from both columns
-        df[JsonDFConfigs['Name']] = df[JsonDFConfigs['Name']].apply(lambda x: formatter.capitalize_words(x))
-        df[JsonDFConfigs['Surname']] = df[JsonDFConfigs['Surname']].apply(lambda x: formatter.capitalize_words(x))
+        df[self.configs_json_values['Name']] = df[self.configs_json_values['Name']].apply(lambda x: formatter.capitalize_words(x))
+        df[self.configs_json_values['Surname']] = df[self.configs_json_values['Surname']].apply(lambda x: formatter.capitalize_words(x))
         # ?# Removes the duplicated fields to avoid errors
-        df = df.drop_duplicates(keep='first', subset=[JsonDFConfigs['GitLink']])
+        df = df.drop_duplicates(keep='first', subset=[self.configs_json_values['GitLink']])
         return df
 
     def __order_indexed_DF_by(self, frame: DataFrame, first_field: str, second_field: str, third_field: str) -> DataFrame:
@@ -263,7 +265,7 @@ class DataFrameHandler:
 
     # *####* MAIN METHOD #####
 
-    def configurate_DF(self, column_value: str, dir_statistics: str) -> None:
+    def configurate_DF(self) -> None:
         """[summary] \n
         Configurate the dataframe with the specified column value. \n
         Args:
@@ -272,14 +274,14 @@ class DataFrameHandler:
         """
 
         # *# Gets the unique values of the column 'column_value' [Division]
-        self.__config_unique_values_in_column(column_value)
+        self.__config_unique_values_in_column(self.configs_json_values['Course'])
         # *# For each unique value of the column 'column_value' [Division]
         # *# Creates a list of dataframes with the students that have the
         # *# specified value in the column 'column_value' [Division]
         for unique in self.unique_columns:
             self.__create_list_DF_students_by(
-                self.main_dataframe, column_value, unique
+                self.main_dataframe, self.configs_json_values['Course'], unique
             )
-        self.create_json_of_each_DF(dir_statistics)
+        self.create_json_of_each_DF(self.__configs.rc_files_config['Dir_Statistics'])
 
     # *####* END MAIN METHOD #####
