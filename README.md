@@ -211,26 +211,29 @@ In order to use this Cloner, you should configure the file [configs.json](./modu
 
 ```json
 {
-    "Github": {
-        "URL": "https://api.github.com/repos",
-        "USER": "YOUR_GITHUB_USER",
-        "REPO": "YOUR_REPOSITORY_NAME",
-        "BRANCH": "THE_PRINCIPAL_BRANCH_NAME"
-    },
-    "DataFrame": {
-        "Fields": {
-            "Date": "First_Datetime_Field_To_Delete",
-            "Name": "Name_For_Column_Of_Names",
-            "Surname": "Name_For_Column_Of_Surnames",
-            "Course": "Name_For_Column_Of_Courses",
-            "ID": "Name_For_Column_Of_Students_ID",
-            "Email": "Name_For_Column_Of_Emails",
-            "GitLink": "Name_For_Column_Of_Links_To_Repositories"
+    "repo_cloner": {
+        "Github": {
+            "URL": "https://api.github.com/repos",
+            "USER": "CaidevOficial",
+            "REPO": "Python_copydetector",
+            "BRANCH": "master"
+        },
+        "DataFrame": {
+            "Fields": {
+                "Date": "Temporal Sign",
+                "Name": "Name",
+                "Surname": "Surname",
+                "Course": "Division",
+                "ID": "Student ID",
+                "Email": "E-Mail",
+                "GitLink": "Link to repository"
+            }
+        },
+        "Files": {
+            "Dir_Plots_img": "./Plot_Images",
+            "Dir_Cloned_Repos": "./Repositories",
+            "Dir_Statistics": "./Statistics"
         }
-    },
-    "Files": {
-        "Dir_Plots_img": "./DIR_FOR_PLOTS_IMAGES",
-        "Dir_Cloned_Repos": "./DIR_FOR_CLONED_REPOSITORIES",
     }
 }
 ```
@@ -310,40 +313,42 @@ For our example, the columns of the csv file are:
 <br><br><br>
 
 
-# Copy Detector
+### About the Copy Detector functionality:
 
 Compares files with configurable extensions (for example: '.ino', '.cpp', '.c', '.h') in different directories and generates a CSV file indicating which files are similar to each other.
 - Ignores language reserved words like break, include, {,},\n,\t.
 
-## Important:
+### Important:
 
-The file [config.json](./configs.json) has the configuration of the script, edit it in case you want to calibrate it according to need.
+The file [config.json](./modules/configs.json) has the configuration of the script, edit it in case you want to calibrate it according to need.
 
 ```json
 {
-    "configs": {
-        "script": {
-            "percentage": 60,
-            "filename_output": "./possible_copies.csv",
-            "sort_by_percent_desc": false,
-            "files_sufix": [".cpp", ".ino"],
-            "excluded_files": ["spect.c", "spects.c"]
-        },
-        "database": {
-            "name": "copies_db",
-            "table_name": "students_copies",
-            "delete_before_insert": true,
-            "paths": {
-                "db_file": "./modules/database/copies_db.db",
-                "DDL": {
-                    "create": "./modules/database/queries/DDL/create.sql",
-                    "drop": "./modules/database/queries/DDL/drop.sql"
-                },
-                "DML":{
-                    "insert": "./modules/database/queries/DML/insert.sql",
-                    "delete": "./modules/database/queries/DML/delete.sql",
-                    "update": "./modules/database/queries/DML/update.sql",
-                    "select": "./modules/database/queries/DDL/select.sql"
+    "copy_detector": {
+        "configs": {
+            "script": {
+                "percentage": 60,
+                "filename_output": "./possible_copies.csv",
+                "sort_by_percent_desc": false,
+                "files_sufix": [".cpp", ".ino"],
+                "excluded_files": ["spect.c", "spects.c"]
+            },
+            "database": {
+                "name": "copies_db",
+                "table_name": "students_copies",
+                "delete_before_insert": true,
+                "paths": {
+                    "db_file": "./modules/database/copies_db.db",
+                    "DDL": {
+                        "create": "./modules/database/queries/DDL/create.sql",
+                        "drop": "./modules/database/queries/DDL/drop.sql"
+                    },
+                    "DML": {
+                        "delete": "./modules/database/queries/DML/delete.sql",
+                        "insert": "./modules/database/queries/DML/insert.sql",
+                        "select": "./modules/database/queries/DDL/select.sql",
+                        "update": "./modules/database/queries/DML/update.sql"
+                    }
                 }
             }
         }
