@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Files
+*.pyc
+*.csv
+*.exe
+./temp/
