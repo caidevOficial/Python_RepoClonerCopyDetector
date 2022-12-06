@@ -1,8 +1,8 @@
 {
     "app_info": {
-        "app_name": "Github Repository Cloner",
-        "main_filename": "Github_Repositories.csv",
-        "version": "[V2.2.1.11]",
+        "app_name": "Repository Cloner & Copy Detector",
+        "main_filename": "Github_Repositories_1F.csv",
+        "version": "[V3.0.0.1]",
         "author": "[FacuFalcone - CaidevOficial]"
     },
     "repo_cloner": {
@@ -34,7 +34,9 @@
             "script": {
                 "percentage": 60,
                 "filename_output": "./possible_copies.csv",
-                "sort_by_percent_desc": false
+                "sort_by_percent_desc": false,
+                "files_sufix": [".cpp", ".ino"],
+                "excluded_files": ["spect.c", "spects.c"]
             },
             "database": {
                 "name": "copies_db",
@@ -46,7 +48,7 @@
                         "create": "./modules/database/queries/DDL/create.sql",
                         "drop": "./modules/database/queries/DDL/drop.sql"
                     },
-                    "DML":{
+                    "DML": {
                         "delete": "./modules/database/queries/DML/delete.sql",
                         "insert": "./modules/database/queries/DML/insert.sql",
                         "select": "./modules/database/queries/DDL/select.sql",

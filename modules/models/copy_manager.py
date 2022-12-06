@@ -1,29 +1,29 @@
-# Copy detector
-# Copyright (C) <2020>  <Ernesto Gigliotti>
-# Copyright (C) <2020>  <Camila Iglesias>
-# Copyright (C) <2022>  <Facundo Falcone> - Improvements
-
+# GNU General Public License V3
+#
+# Copyright (C) <2022>  <Facundo Falcone>
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 from modules.models.file import File
 from modules.models.group import Group
+from modules.models.file_manager import FileManager
 
 class CopyManager:
     """Represents the class CopyManager that is in charge of handle the creation of groups of files that have possible copies"""
 
-    def __init__(self, analyze_path: str) -> None:
+    def __init__(self, analyze_path: str, files_manager: FileManager) -> None:
         """
         This function takes a path to a directory and creates a list of files to analyze and a list of
         groups analyzed
@@ -34,6 +34,8 @@ class CopyManager:
         self.__analyze_path = analyze_path
         self.__files_to_analyze = list[File]()
         self.__groups_analyzed = list[Group]()
+        self.__files_sufix = files_manager.files_sufix
+        self.__excluded_files = files_manager.excluded_files
     
     @property
     def groups_analyzed(self) -> list[Group]:
@@ -58,12 +60,24 @@ class CopyManager:
         or spec.c
         :return: A list of File objects.
         """
-        for root, dirs, files in os.walk(self.__analyze_path, topdown=False):
-            for name in files:
-                if name.endswith(".c") and name != "specs.c" and name != "spec.c":
-                    file_path = os.path.join(root, name)
-                    file_stats = os.stat(file_path).st_size
-                    self.__files_to_analyze.append(File(file_path, file_stats, name))
+        directories = list[str](filter(lambda file: 'Repositories' in file[0], os.walk('.', topdown=False)))
+        for sufix in self.__files_sufix:
+            for index in directories:
+                if index[2]:
+                    files = list[str](filter(lambda file: str(file).endswith(sufix), index[2]))
+                    if files:
+                        for filename in files:
+                            if not filename in self.__excluded_files:
+                                file_path = os.path.join(index[0], filename)
+                                file_stats = os.stat(file_path).st_size
+                                self.__files_to_analyze.append(File(file_path, file_stats, filename))
+            
+        # for root, dirs, files in os.walk(self.__analyze_path, topdown=False):
+        #     for name in files:
+        #         if name.endswith(".c") and name != "specs.c" and name != "spec.c":
+        #             file_path = os.path.join(root, name)
+        #             file_stats = os.stat(file_path).st_size
+        #             self.__files_to_analyze.append(File(file_path, file_stats, name))
         print(f"{len(self.__files_to_analyze)} files detected.")
         self.__print_files_path()
 

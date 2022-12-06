@@ -1,18 +1,17 @@
-# Copy detector
-# Copyright (C) <2020>  <Ernesto Gigliotti>
-# Copyright (C) <2020>  <Camila Iglesias>
-# Copyright (C) <2022>  <Facundo Falcone> - Improvements
-
+# GNU General Public License V3
+#
+# Copyright (C) <2022>  <Facundo Falcone>
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -56,3 +55,18 @@ class FileManager:
         """
         return bool(self.__configs["sort_by_percent_desc"])
 
+    @property
+    def files_sufix(self) -> list[str]:
+        """
+        It returns a list of strings, which are the sufixes of the files that the program will look for
+        :return: A list of strings.
+        """
+        return list[str](self.__configs["files_sufix"])
+    
+    @property
+    def excluded_files(self) -> list[str]:
+        """
+        This function returns a list of strings that are excluded files
+        :return: A list of strings.
+        """
+        return list[str](self.__configs["excluded_files"])
