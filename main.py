@@ -16,27 +16,27 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import datetime
+import flet as ft
 from modules.models.formatter import Formatter as FMT
-from modules.models.config_manager import ConfigManager as CoMa
 from modules.models.clone_messenger import CloneMessenger as CM
-from modules import c_manager, r_manager
 
+from modules.gui.main_gui import gui_app
+# 
+# FILE_CONFIG_NAME: str = './modules/configs.json'
+# config_manager = CoMa(FILE_CONFIG_NAME)
+# c_manager = CopyDetectorManager(config_manager)
+# r_manager = RepoClonerManager(config_manager)
+# start_time = datetime.datetime.now()
+
+
+# ?#########? Start Timer Config ##########
+# message_manager = CM()
+# time_manager = FMT()
+# time_manager.crude_time = start_time
+# ?#########? End Timer Config ##########
+
+# message_manager.message = f"Elapsed Time: {time_manager.formatted_time_str}"
+# message_manager.print_success_message()
 
 if __name__ == '__main__':
-    # ?######### Start Basic Configuration ##########
-    FILE_CONFIG_NAME: str = './modules/configs.json'
-    config_manager = CoMa(FILE_CONFIG_NAME)
-    start_time = datetime.datetime.now()
-    # ?######### End Basic Configuration ##########
-    
-    # ?#########? Start Timer Config ##########
-    message_manager = CM()
-    time_manager = FMT()
-    time_manager.crude_time = start_time
-    # ?#########? End Timer Config ##########
-    
-    r_manager(config_manager)
-    c_manager(config_manager)
-
-    message_manager.message = f"Elapsed Time: {time_manager.formatted_time_str}"
-    message_manager.print_success_message()
+    ft.app(target=gui_app)

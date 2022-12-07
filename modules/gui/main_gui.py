@@ -15,5 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from modules.copy_detector import copy_detector_manager as c_manager
-from modules.repo_cloner import repo_cloner_manager as r_manager
+import flet as ft
+from flet import Page
+from modules.gui.main_gui_view import MainView
+
+def gui_app(page: Page):
+    page.title = 'Facu Falcone'
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    
+    # ?## Widgets ##
+    view = MainView()
+    # ?## Widgets ##
+
+    page.add(view.build())
+    page.update()
+
+
+if __name__ == '__main__':
+    ft.app(target=gui_app)

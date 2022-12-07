@@ -44,7 +44,7 @@ class DAOManager:
         with open(query_path, 'r') as db_config:
             return db_config.read()
 
-    def __execute_queries(self, queries: list[str], error_msg: str, success_msg: str, type: str = 'create') -> None:
+    def __execute_queries(self, queries: list[str], error_msg: str, success_msg: str, type: str = 'create') -> db.Cursor:
         """
         It executes a list of queries and returns the result of the last query executed
         
@@ -153,3 +153,13 @@ class DAOManager:
         """
         query = self.__replace_table_name(self.__open_query_file(self.__ddl_paths['drop']))
         self.__execute_queries([query], 'Error dropping the table', f'Table {self.__table} dropped successfully', type='drop')
+
+    def read_table(self):
+        """
+        It reads the table and returns the result
+        :return: The result of the query.
+        """
+        query = self.__replace_table_name(self.__open_query_file(self.__dml_paths['select']))
+        result = self.__execute_queries([query], 'Error getting the table info', f'Table {self.__table} read successfully', type='select')
+        # print(result.fetchall())
+        return result.fetchall()
